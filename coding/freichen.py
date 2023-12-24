@@ -1,0 +1,24 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+import os
+
+artist_name = "radit"
+image_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'image')
+image_path = os.path.join(image_folder, f'{artist_name}.png')
+I = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+# Kernel untuk operator gradien Frei-Chen
+Fx = np.array([[-1, -np.sqrt(2), -1], [0, 0, 0], [1, np.sqrt(2), 1]])
+Fy = np.array([[1, 0, -1], [np.sqrt(2), 0, -np.sqrt(2)], [1, 0, -1]])
+
+# Deteksi tepi operator gradien Frei-Chen
+Jx = cv2.filter2D(I, cv2.CV_64F, Fx)
+Jy = cv2.filter2D(I, cv2.CV_64F, Fy)
+Jedge = np.sqrt(Jx**2 + Jy**2)
+
+plt.imshow(Jedge, cmap='gray')
+plt.title('Deteksi Tepi Gradien Frei-Chen')
+output_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output')
+output_path = os.path.join(output_folder, f'{artist_name}_freichen.png')
+plt.savefig(output_path)
